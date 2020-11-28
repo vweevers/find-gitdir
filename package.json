@@ -1,0 +1,38 @@
+{
+  "name": "find-gitdir",
+  "version": "0.0.0",
+  "description": "Find .git directory with support of submodules and --separate-git-dir",
+  "license": "MIT",
+  "author": "Vincent Weevers",
+  "scripts": {
+    "test": "standard && nyc node test"
+  },
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "catering": "^2.0.0",
+    "find-file-up": "^2.0.1"
+  },
+  "devDependencies": {
+    "nyc": "^15.1.0",
+    "standard": "^16.0.3",
+    "tape": "^5.0.1",
+    "tempy": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vweevers/find-gitdir.git"
+  },
+  "homepage": "https://github.com/vweevers/find-gitdir",
+  "keywords": [
+    "directory",
+    "find",
+    "git",
+    "gitdir",
+    "submodules"
+  ],
+  "engines": {
+    "node": ">=10"
+  }
+}
