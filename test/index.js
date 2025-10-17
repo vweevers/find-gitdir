@@ -40,6 +40,19 @@ test('cwd and roam', function (t) {
   })
 })
 
+test('when input is a gitdir', function (t) {
+  t.plan(4)
+
+  const expected = path.join(path.dirname(__dirname), '.git')
+
+  t.is(gitdir.sync(expected), expected)
+  gitdir(expected).then(actual => t.is(actual, expected))
+  gitdir(expected, function (err, actual) {
+    t.ifError(err, 'no error')
+    t.is(actual, expected)
+  })
+})
+
 test('when directory does not exist', function (t) {
   t.plan(16)
 

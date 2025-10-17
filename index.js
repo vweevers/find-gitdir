@@ -9,13 +9,15 @@ module.exports = function gitdir (cwd, roam, callback) {
   if (typeof cwd === 'function') return gitdir(null, null, cwd)
   if (typeof roam === 'function') return gitdir(cwd, null, roam)
 
-  cwd = cwd || '.'
+  cwd = path.resolve(cwd || '.')
   callback = fromCallback(callback)
 
-  if (roam) {
+  if (path.basename(cwd) === '.git') {
+    next(null, cwd)
+  } else if (roam) {
     find('.git', cwd, next)
   } else {
-    next(null, path.resolve(cwd, '.git'))
+    next(null, path.join(cwd, '.git'))
   }
 
   return callback.promise
@@ -40,15 +42,17 @@ module.exports = function gitdir (cwd, roam, callback) {
 }
 
 module.exports.sync = function (cwd, roam) {
-  cwd = cwd || '.'
+  cwd = path.resolve(cwd || '.')
 
   let git
   let symlink
 
-  if (roam) {
+  if (path.basename(cwd) === '.git') {
+    git = cwd
+  } else if (roam) {
     git = find.sync('.git', cwd)
   } else {
-    git = path.resolve(cwd, '.git')
+    git = path.join(cwd, '.git')
   }
 
   if (!git) {
