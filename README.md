@@ -1,6 +1,6 @@
 # find-gitdir
 
-**Find `.git` directory with support of submodules and [`--separate-git-dir`](https://git-scm.com/docs/git-init#Documentation/git-init.txt---separate-git-dirltgitdirgt).**
+**Find `.git` directory with support of submodules, [`--separate-git-dir`](https://git-scm.com/docs/git-init#Documentation/git-init.txt---separate-git-dirltgitdirgt) and [linked worktrees](https://git-scm.com/docs/git-worktree).**
 
 [![npm status](http://img.shields.io/npm/v/find-gitdir.svg)](https://www.npmjs.org/package/find-gitdir)
 [![node](https://img.shields.io/node/v/find-gitdir.svg)](https://www.npmjs.org/package/find-gitdir)
@@ -29,16 +29,21 @@ By default `find-gitdir` does not look in parent directories. It can be enabled:
 
 ```js
 await gitdir('./node_modules/find-gitdir')       // null
-await gitdir('./node_modules/find-gitdir', true) // /example/.git
+await gitdir('./node_modules/find-gitdir', { roam: true }) // /example/.git
 ```
 
 ## API
 
-### `gitdir([cwd][, roam][, callback])`
+### `gitdir([cwd][, options][, callback])`
 
-Yields an absolute path to a `.git` directory or `null` if not found, given working directory `cwd` which defaults to `process.cwd()`. Set `roam` to true to enable looking in parent directories. If no callback if provided, a promise is returned.
+Yields an absolute path to a `.git` directory or `null` if not found, given working directory `cwd` which defaults to `process.cwd()`. If no callback if provided, a promise is returned. Options:
 
-### `gitdir.sync([cwd][, roam])`
+- `roam` (boolean, default `false`): enable looking in parent directories
+- `common` (boolean, default `false`): if `cwd` is a [linked worktree](https://git-scm.com/docs/git-worktree) then return the gitdir of the main worktree (a.k.a. [`$GIT_COMMON_DIR`](https://git-scm.com/docs/gitrepository-layout)) instead of the gitdir of the linked worktree. This can be useful if you need non-worktree files like `config`.
+
+If `options` is a boolean, it is interpreted as `options.roam` for backwards compatibility.
+
+### `gitdir.sync([cwd][, options])`
 
 Synchronous variant. Returns an absolute path or `null`.
 

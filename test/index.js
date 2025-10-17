@@ -4,6 +4,7 @@ const test = require('tape')
 const tempy = require('tempy')
 const path = require('path')
 const fs = require('fs')
+const execFileSync = require('child_process').execFileSync
 const gitdir = require('..')
 const own = path.resolve(__dirname, '..', '.git')
 
@@ -133,3 +134,33 @@ test('empty symlink', function (t) {
     t.is(dir, null)
   })
 })
+
+// TODO: also test git submodules in a linked worktree
+test('linked worktree', function (t) {
+  t.plan(4 * 2)
+
+  const mainWorkTree = tempy.directory()
+  const linkedWorkTree = tempy.directory()
+  const linkedWorkTreeName = path.basename(linkedWorkTree)
+
+  createRepository(mainWorkTree)
+  execFileSync('git', ['worktree', 'add', '-d', linkedWorkTree], { cwd: mainWorkTree })
+
+  t.is(gitdir.sync(mainWorkTree), path.join(mainWorkTree, '.git'), 'main')
+  t.is(gitdir.sync(mainWorkTree, { common: true }), path.join(mainWorkTree, '.git'), 'main (2)')
+  t.is(gitdir.sync(linkedWorkTree), path.join(mainWorkTree, '.git', 'worktrees', linkedWorkTreeName), 'linked')
+  t.is(gitdir.sync(linkedWorkTree, { common: true }), path.join(mainWorkTree, '.git'), 'common')
+
+  gitdir(mainWorkTree).then(result => { t.is(result, path.join(mainWorkTree, '.git'), 'main') })
+  gitdir(mainWorkTree, { common: true }).then(result => { t.is(result, path.join(mainWorkTree, '.git'), 'main (2)') })
+  gitdir(linkedWorkTree).then(result => { t.is(result, path.join(mainWorkTree, '.git', 'worktrees', linkedWorkTreeName), 'linked') })
+  gitdir(linkedWorkTree, { common: true }).then(result => { t.is(result, path.join(mainWorkTree, '.git'), 'common') })
+})
+
+function createRepository (cwd) {
+  fs.writeFileSync(path.join(cwd, 'README'), 'hello world')
+
+  execFileSync('git', ['init', '.'], { cwd })
+  execFileSync('git', ['add', 'README'], { cwd })
+  execFileSync('git', ['commit', '-m', 'Initial'], { cwd })
+}
