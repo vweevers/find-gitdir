@@ -161,6 +161,8 @@ function createRepository (cwd) {
   fs.writeFileSync(path.join(cwd, 'README'), 'hello world')
 
   execFileSync('git', ['init', '.'], { cwd })
+  execFileSync('git', ['config', 'user.name', 'test user'], { cwd })
+  execFileSync('git', ['config', 'user.email', 'test@localhost'], { cwd })
   execFileSync('git', ['add', 'README'], { cwd })
   execFileSync('git', ['commit', '-m', 'Initial'], { cwd })
 }
