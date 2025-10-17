@@ -8,6 +8,7 @@
     "test": "standard && nyc node test"
   },
   "files": [
+    "CHANGELOG.md",
     "index.js"
   ],
   "dependencies": {
